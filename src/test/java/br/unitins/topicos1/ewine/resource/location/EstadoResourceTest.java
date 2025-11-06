@@ -1,114 +1,118 @@
 package br.unitins.topicos1.ewine.resource.location;
 
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.hasSize;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 
 import br.unitins.topicos1.ewine.dto.locationdto.EstadoDTO;
-import br.unitins.topicos1.ewine.dto.locationdto.EstadoDTOResponse;
-import br.unitins.topicos1.ewine.service.location.EstadoService;
+import br.unitins.topicos1.ewine.model.locationentities.Regiao;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import jakarta.inject.Inject;
 
 @QuarkusTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EstadoResourceTest {
 
-    @Inject
-    EstadoService estadoService;
-
     @Test
-    void incluirTest() {
-        EstadoDTO dto = new EstadoDTO("Tocantins", "TO", 1L);
-        EstadoDTOResponse response = estadoService.create(dto);
-
-        assertNotNull(response);
-        assertEquals(dto.nome(), response.nome());
+    @Order(1)
+    public void testBuscarTodos() {
+        given()
+            .when()
+            .get("/estados")
+            .then()
+            .statusCode(200)
+            .body("$", hasSize(3)); // Bahia, Goiás, Mendoza
     }
 
     @Test
-    void buscarTodosTest() {
-        RestAssured.given()
-                .when()
-                    .get("/estados")
-                .then()
-                    .statusCode(200)
-                    .body("size()", notNullValue());
+    @Order(2)
+    public void testBuscarPorId() {
+        given()
+            .when()
+            .get("/estados/1")
+            .then()
+            .statusCode(200)
+            .body("id", is(1))
+            .body("nome", is("Bahia"))
+            .body("sigla", is("BA"));
     }
 
     @Test
-    void buscarPorIdTest() {
-        EstadoDTO dto = new EstadoDTO("Goiás", "GO", 1L);
-        EstadoDTOResponse response = estadoService.create(dto);
-
-        RestAssured.given()
-                .when()
-                    .get("/estados/" + response.idPais()) // o id do país está sendo usado, mas ajustaremos abaixo
-                .then()
-                    .statusCode(200)
-                    .body("nome", equalTo("Goiás"));
+    @Order(3)
+    public void testBuscarPorNome() {
+        given()
+            .when()
+            .get("/estados/find/Bahia")
+            .then()
+            .statusCode(200)
+            .body("$", hasSize(1))
+            .body("[0].nome", is("Bahia"));
     }
 
     @Test
-    void buscarPorNomeTest() {
-        EstadoDTO dto = new EstadoDTO("Pará", "PA", 1L);
-        estadoService.create(dto);
-
-        RestAssured.given()
-                .when()
-                    .get("/estados/find/Pará")
-                .then()
-                    .statusCode(200)
-                    .body("[0].sigla", equalTo("PA"));
+    @Order(4)
+    public void testBuscarPorPais() {
+        given()
+            .when()
+            .get("/estados/pais/1")
+            .then()
+            .statusCode(200)
+            .body("$", hasSize(2)); // Bahia e Goiás são do Brasil
     }
 
     @Test
-    void buscarPorPaisTest() {
-        EstadoDTO dto = new EstadoDTO("Bahia", "BA", 1L);
-        estadoService.create(dto);
+    @Order(5)
+    public void testCriarEstado() {
+        EstadoDTO novoEstado = new EstadoDTO(
+            "São Paulo",
+            "SP",
+            1L,
+            1L
+        );
 
-        RestAssured.given()
-                .when()
-                    .get("/estados/pais/1")
-                .then()
-                    .statusCode(200)
-                    .body("[0].nome", equalTo("Bahia"));
+        given()
+            .contentType(ContentType.JSON)
+            .body(novoEstado)
+            .when()
+            .post("/estados")
+            .then()
+            .statusCode(200);
     }
 
     @Test
-    void alterarTest() {
-        EstadoDTO dto = new EstadoDTO("Maranhão", "MA", 1L);
-        EstadoDTOResponse response = estadoService.create(dto);
+    @Order(6)
+    public void testAtualizarEstado() {
+        EstadoDTO estadoAtualizado = new EstadoDTO(
+            "Rio de Janeiro",
+            "RJ",
+            1L,
+            1L
+        );
 
-        EstadoDTO dtoUpdate = new EstadoDTO("Maranhão Atualizado", "MA", 1L);
-
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(dtoUpdate)
-                .when()
-                    .put("/estados/" + response.idPais()) // ⚠️ aqui também precisamos do id do estado, não do país
-                .then()
-                    .statusCode(200);
-
-        List<EstadoDTOResponse> estados = estadoService.findByNome("Maranhão Atualizado");
-        assertEquals(1, estados.size());
-        assertEquals("Maranhão Atualizado", estados.get(0).nome());
+        given()
+            .contentType(ContentType.JSON)
+            .body(estadoAtualizado)
+            .when()
+            .put("/estados/1")
+            .then()
+            .statusCode(200)
+            .body("nome", is("Rio de Janeiro"))
+            .body("sigla", is("RJ"));
     }
 
     @Test
-    void apagarTest() {
-        EstadoDTO dto = new EstadoDTO("Piauí", "PI", 1L);
-        EstadoDTOResponse response = estadoService.create(dto);
-
-        RestAssured.given()
-                .when()
-                    .delete("/estados/" + response.idPais()) // ⚠️ idem
-                .then()
-                    .statusCode(204);
+    @Order(7)
+    public void testDeletarEstado() {
+        given()
+            .when()
+            .delete("/estados/3") // Deletar Mendoza
+            .then()
+            .statusCode(204);
     }
 }

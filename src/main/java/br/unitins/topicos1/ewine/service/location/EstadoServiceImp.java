@@ -7,6 +7,7 @@ import br.unitins.topicos1.ewine.dto.locationdto.EstadoDTO;
 import br.unitins.topicos1.ewine.dto.locationdto.EstadoDTOResponse;
 import br.unitins.topicos1.ewine.model.locationentities.Estado;
 import br.unitins.topicos1.ewine.model.locationentities.Pais;
+import br.unitins.topicos1.ewine.model.locationentities.Regiao;
 import br.unitins.topicos1.ewine.repository.locationrepository.EstadoRepository;
 import br.unitins.topicos1.ewine.repository.locationrepository.PaisRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -30,6 +31,7 @@ public class EstadoServiceImp implements EstadoService {
         novoEstado.setNome(estadoDTO.nome());
         novoEstado.setSigla(estadoDTO.sigla());
         novoEstado.setPais(buscarPaisOuFalhar(estadoDTO.idPais()));
+        novoEstado.setRegiao(Regiao.valueOf(estadoDTO.idRegiao()));
 
         estadoRepository.persist(novoEstado);
         return EstadoDTOResponse.valueOf(novoEstado);

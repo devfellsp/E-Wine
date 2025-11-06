@@ -1,10 +1,13 @@
 package br.unitins.topicos1.ewine.model.locationentities;
 
+import java.util.List;
+
 import br.unitins.topicos1.ewine.model.others.DefaultEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
 
 @Entity
@@ -18,6 +21,9 @@ public class Estado extends DefaultEntity {
 
     @Enumerated(EnumType.STRING)
     private Regiao regiao;
+
+    @OneToMany(mappedBy = "estado", orphanRemoval = true)
+    private List<Cidade> cidades;
 
 
     public String getNome() {

@@ -13,9 +13,9 @@ import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
 @Entity
+@Getter
+@Setter     
 public class Vinho extends DefaultEntity {
 
     private String nome;

@@ -17,7 +17,4 @@ public class Cidade extends DefaultEntity {
     @JoinColumn(name = "id_estado")
     private Estado estado;
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }

@@ -1,7 +1,9 @@
 package br.unitins.topicos1.ewine.dto.locationdto;
 
+
 public record EstadoDTO(
     String nome,
     String sigla,
-    Long idPais
+    Long idPais,
+    Long idRegiao
 ) {}
