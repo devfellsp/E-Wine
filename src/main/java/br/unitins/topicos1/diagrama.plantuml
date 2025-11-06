@@ -1,0 +1,188 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+
+
+' ========== USUÁRIOS ==========
+package "Usuários" <<Rectangle>> {
+  abstract class Usuario extends DefaultEntity {
+    +String nome
+    +String email
+    +String senha
+    +String telefone
+    +LocalDate dataCadastro
+    +Boolean ativo
+  }
+
+  class Gerente extends Usuario {
+    +String cargo
+    +String departamento
+    +LocalDate dataContratacao
+    +BigDecimal salario
+  }
+
+  class Cliente extends Usuario {
+    +String cpf
+    +LocalDate dataNascimento
+    +String endereco
+    +Cidade cidade
+    +List<Assinatura> assinaturas
+  }
+}
+
+' ========== LOCALIZAÇÃO ==========
+package "Localização" <<Rectangle>> {
+  class Pais extends DefaultEntity {
+    +String nome
+    +String codigo
+    +List<Estado> estados
+  }
+
+  class Estado extends DefaultEntity {
+    +String nome
+    +String sigla
+    +Pais pais
+    +List<Cidade> cidades
+  }
+
+  class Cidade extends DefaultEntity {
+    +String nome
+    +Estado estado
+  }
+}
+
+' ========== CARACTERÍSTICAS DO VINHO ==========
+package "Características" <<Rectangle>> {
+  class Marca extends DefaultEntity {
+    +String nome
+    +String descricao
+    +List<Vinho> vinhos
+  }
+
+  class Estilo extends DefaultEntity {
+    +String nome
+    +String caracteristicas
+    +List<Vinho> vinhos
+  }
+
+  class TipoVinho extends DefaultEntity {
+    +String tipo
+    +String descricao
+    +List<Vinho> vinhos
+  }
+
+  class Uva extends DefaultEntity {
+    +String nome
+    +String origem
+    +String caracteristicas
+    +List<Vinho> vinhos
+  }
+
+  class Safra extends DefaultEntity {
+    +Integer ano
+    +String qualidade
+    +List<Vinho> vinhos
+  }
+
+  class Ocasiao extends DefaultEntity {
+    +String nome
+    +String descricao
+    +List<Vinho> vinhos
+  }
+}
+
+' ========== VINHO ==========
+package "Produto" <<Rectangle>> {
+  class Vinho extends DefaultEntity {
+    +String nome
+    +BigDecimal preco
+    +String descricao
+    +Integer volume
+    +Marca marca
+    +Estilo estilo
+    +Ocasiao ocasiao
+    +Safra safra
+    +TipoVinho tipoVinho
+    +List<Uva> uvas
+    +Pais origem
+  }
+}
+
+' ========== SISTEMA WINEBOX ==========
+package " WineBox " <<Rectangle>> {
+  class WineBox extends DefaultEntity {
+    +String nome
+    +String descricao
+    +BigDecimal preco
+    +Integer quantidadeVinhos
+    +TipoAssinatura tipoAssinatura
+    +LocalDate dataInicio
+    +LocalDate dataFim
+    +Boolean ativa
+    +Gerente responsavel
+    +List<VinhoWineBox> vinhos
+    +List<Assinatura> assinaturas
+  }
+
+  class VinhoWineBox extends DefaultEntity {
+    +WineBox wineBox
+    +Vinho vinho
+    +Integer quantidade
+    +BigDecimal precoPromocional
+  }
+
+  class Assinatura extends DefaultEntity {
+    +Cliente cliente
+    +LocalDate dataAssinatura
+    +StatusAssinatura status
+    +WineBox wineBox
+    +BigDecimal valorPago
+  }
+
+  enum TipoAssinatura {
+    MENSAL
+    TRIMESTRAL
+    SEMESTRAL
+    ANUAL
+  }
+
+  enum StatusAssinatura {
+    ATIVA
+    CANCELADA
+    SUSPENSA
+    EXPIRADA
+  }
+}
+
+' ========== RELACIONAMENTOS DE USUÁRIOS ==========
+Usuario <|-- Gerente
+Usuario <|-- Cliente
+Cliente }o--|| Cidade : "reside em"
+
+' ========== RELACIONAMENTOS DE LOCALIZAÇÃO ==========
+Pais ||--o{ Estado : "possui"
+Estado ||--o{ Cidade : "possui"
+
+' ========== RELACIONAMENTOS DO VINHO ==========
+Vinho }o--|| Marca : "possui"
+Vinho }o--|| Estilo : "possui"
+Vinho }o--|| Ocasiao : "adequado para"
+Vinho }o--|| Safra : "possui"
+Vinho }o--|| TipoVinho : "é do tipo"
+Vinho }o--|| Pais : "origem"
+Vinho }o--o{ Uva : "feito com"
+
+' ========== RELACIONAMENTOS WINEBOX ==========
+WineBox ||--o{ VinhoWineBox : "contém"
+VinhoWineBox }o--|| Vinho : "inclui"
+WineBox ||--o{ Assinatura : "gera"
+WineBox }o--|| TipoAssinatura : "tipo"
+WineBox }o--|| Gerente : "gerenciado por"
+Assinatura }o--|| StatusAssinatura : "status"
+Assinatura }o--|| Cliente : "pertence a"
+Cliente ||--o{ Assinatura : "possui"
+
+@enduml
