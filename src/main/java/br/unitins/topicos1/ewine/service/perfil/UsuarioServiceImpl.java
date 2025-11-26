@@ -4,9 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import br.unitins.topicos1.ewine.dto.perfil.UsuarioDTO;
 import br.unitins.topicos1.ewine.model.perfil.Perfil;
 import br.unitins.topicos1.ewine.model.perfil.Usuario;
@@ -45,7 +47,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario create(UsuarioDTO dto) {
         if (dto == null) return null;
 
-        // validações básicas
         if (dto.login() == null || dto.login().isBlank())
             throw new IllegalArgumentException("login é obrigatório");
         if (dto.senha() == null || dto.senha().isBlank())
@@ -58,8 +59,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setLogin(dto.login());
         usuario.setSenha(hashSenha(dto.senha()));
 
-        Perfil perfil = parsePerfil(dto.perfil());
-        usuario.setPerfil(perfil);
+        if (dto.perfil() != null && !dto.perfil().isBlank()) {
+            usuario.setPerfil(parsePerfil(dto.perfil()));
+        } else {
+            throw new IllegalArgumentException("perfil é obrigatório");
+        }
 
         repository.persist(usuario);
         return usuario;
@@ -76,14 +80,12 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario.setNome(dto.nome());
 
         if (dto.login() != null && !dto.login().isBlank()) {
-            // checar unicidade se for diferente
             Usuario existente = repository.findByLogin(dto.login());
             if (existente != null && !existente.getId().equals(id))
                 throw new IllegalArgumentException("login já em uso por outro usuário");
             usuario.setLogin(dto.login());
         }
 
-        // atualiza senha somente se fornecida
         if (dto.senha() != null && !dto.senha().isBlank()) {
             usuario.setSenha(hashSenha(dto.senha()));
         }
@@ -91,7 +93,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (dto.perfil() != null && !dto.perfil().isBlank()) {
             usuario.setPerfil(parsePerfil(dto.perfil()));
         }
-        // entidade é gerenciada — mudanças serão persistidas ao fim da transação
     }
 
     @Override
@@ -100,40 +101,46 @@ public class UsuarioServiceImpl implements UsuarioService {
         repository.deleteById(id);
     }
 
-    // --- Helpers ---
-
+    // --- helper: parsePerfil suporta id (String numérica), nome do enum, ou label ---
     private Perfil parsePerfil(String perfilStr) {
-        if (perfilStr == null || perfilStr.isBlank())
-            throw new IllegalArgumentException("perfil é obrigatório");
+        String p = perfilStr.trim();
+
+        // try numeric id (pode lançar NumberFormatException, que é capturado abaixo como IllegalArgumentException)
         try {
-            return Perfil.valueOf(perfilStr.trim().toUpperCase());
+            Long id = Long.valueOf(p);
+            return Perfil.valueOf(id); // usa o método valueOf(Long) do seu enum
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("perfil inválido. Use: " + availablePerfis());
+            // continua para as outras tentativas (captura NumberFormatException e IllegalArgumentException do valueOf)
         }
+
+        // try enum name (ADMIN, CLIENTE) — tornar case-insensitive
+        try {
+            return Perfil.valueOf(p.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // continua
+        }
+
+        // try label (ex: "Admin" ou "Cliente") case-insensitive
+        for (Perfil perfil : Perfil.values()) {
+            if (perfil.label.equalsIgnoreCase(p)) {
+                return perfil;
+            }
+        }
+
+        throw new IllegalArgumentException("perfil inválido: " + perfilStr + ". Valores válidos: "+
+            java.util.Arrays.toString(Perfil.values()));
     }
 
-    private String availablePerfis() {
-        StringBuilder sb = new StringBuilder();
-        for (Perfil p : Perfil.values()) {
-            if (sb.length() > 0) sb.append(", ");
-            sb.append(p.name());
-        }
-        return sb.toString();
-    }
-
-    // Hash simples com SHA-256 (substitua por BCrypt para produção)
+    // --- helper: hash (SHA-256 usado aqui, troque por BCrypt em produção) ---
     private String hashSenha(String senha) {
         if (senha == null) return null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashed = md.digest(senha.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
-            for (byte b : hashed) {
-                sb.append(String.format("%02x", b));
-            }
+            for (byte b : hashed) sb.append(String.format("%02x", b));
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            // não deve ocorrer — SHA-256 disponível no JDK
             throw new RuntimeException("Erro ao hashear senha", e);
         }
     }
