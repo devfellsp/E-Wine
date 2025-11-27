@@ -2,14 +2,16 @@ package br.unitins.topicos1.ewine.model.wineentities;
 
 import java.util.List;
 
-import br.unitins.topicos1.ewine.model.locationentities.Pais;
+import br.unitins.topicos1.ewine.model.locationentities. Pais;
 import br.unitins.topicos1.ewine.model.others.DefaultEntity;
-import br.unitins.topicos1.ewine.model.others.Marca;
+import br.unitins.topicos1.ewine.model. others.Marca;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable; // Import adicionado
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta. persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,12 +20,31 @@ import lombok.Setter;
 @Setter     
 public class Vinho extends DefaultEntity {
 
+    @NotBlank(message = "Nome do vinho é obrigatório")
+    @Size(min = 2, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
     private String nome;
-    private Double preco;
-    private Integer quantEstoque;
+    
+    @Size(max = 1000, message = "Descrição não pode exceder 1000 caracteres")
     private String descricao;
+    
     private String imagem;
-    private String sku;
+    
+    private Double teorAlcoolico;
+    
+    private Integer volume; // Em ml (ex: 750, 1000)
+    
+    private String harmonizacao;
+    
+    private String notasDegustacao;
+    
+    private String servicoTemperatura; // Ex: "16-18°C"
+    
+    // ============================================
+    // CAMPOS REMOVIDOS (agora estão em Produto):
+    // - private Double preco;        ← PRODUTO
+    // - private Integer quantEstoque; ← ESTOQUE  
+    // - private String sku;          ← PRODUTO
+    // ============================================
 
     // RELAÇÃO CORRIGIDA: Vinho é agora o lado PROPRIETÁRIO (dono da tabela de junção)
     @ManyToMany
@@ -34,11 +55,9 @@ public class Vinho extends DefaultEntity {
     )
     private List<Uva> uvas;
 
-
     @ManyToOne
     @JoinColumn(name = "id_tipo_vinho")
     private TipoVinho tipoVinho;
-
 
     @ManyToOne
     @JoinColumn(name = "id_pais")
@@ -60,9 +79,27 @@ public class Vinho extends DefaultEntity {
     @JoinColumn(name = "id_marca")
     private Marca marca;
 
-    // ************************************************
-    // Nota: Lembre-se que o Uva.java precisa do mappedBy correto:
-    // @ManyToMany(mappedBy = "uvas")
-    // private List<Vinho> vinhos;
-    // ************************************************
+    // ============================================
+    // MÉTODOS DE CONVENIÊNCIA:
+    // ============================================
+    
+    public String getTeorAlcoolicoFormatado() {
+        return teorAlcoolico != null ?  teorAlcoolico + "%" : null;
+    }
+    
+    public String getVolumeFormatado() {
+        return volume != null ? volume + "ml" : null;
+    }
+    
+    public String getNomeCompleto() {
+        StringBuilder nome = new StringBuilder();
+        if (this.nome != null) nome.append(this.nome);
+        if (safra != null && safra.getAno() != null) {
+            nome.append(" ").append(safra.getAno());
+        }
+        if (volume != null) {
+            nome.append(" - ").append(getVolumeFormatado());
+        }
+        return nome.toString();
+    }
 }

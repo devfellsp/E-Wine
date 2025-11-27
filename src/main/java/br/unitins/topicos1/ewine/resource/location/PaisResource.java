@@ -2,9 +2,12 @@ package br.unitins.topicos1.ewine.resource.location;
 
 import java.util.List;
 
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+
 import br.unitins.topicos1.ewine.dto.locationdto.PaisDTO;
 import br.unitins.topicos1.ewine.dto.locationdto.PaisDTOResponse;
 import br.unitins.topicos1.ewine.service.location.PaisService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -25,23 +28,32 @@ public class PaisResource {
     PaisService service;
 
     @GET
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
     public List<PaisDTOResponse> buscarTodos() {
         return service.findAll();
     }
 
     @GET
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
     @Path("/{id}")
     public PaisDTOResponse buscarPorId(@PathParam("id") Long id) {
         return service.findById(id);
     }
 
     @GET
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
     @Path("/find/{nome}")
     public List<PaisDTOResponse> buscarPorNome(@PathParam("nome") String nome) {
         return service.findByName(nome);
     }
 
     @POST
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     public PaisDTOResponse incluir(PaisDTO dto) {
         return service.create(dto);
     }
@@ -53,6 +65,9 @@ public class PaisResource {
     }
 
     @DELETE
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Path("/{id}")
     public void apagar(@PathParam("id") Long id) {
         service.delete(id);

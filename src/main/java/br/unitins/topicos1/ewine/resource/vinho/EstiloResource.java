@@ -1,4 +1,5 @@
 package br.unitins.topicos1.ewine.resource.vinho;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -12,6 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.unitins.topicos1.ewine.dto.winedto.EstiloDTO; // Importando o DTO de Estilo
@@ -31,6 +33,9 @@ public class EstiloResource {
     // CREATE
     // ------------------------------
     @POST
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Criar novo estilo", description = "Cria um novo estilo de vinho (ex: Seco, Doce, etc.) no sistema")
     @APIResponses({
         @APIResponse(responseCode = "201", description = "Estilo criado com sucesso",
@@ -47,6 +52,9 @@ public class EstiloResource {
     // READ
     // ------------------------------
     @GET
+       @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+ 
     @Path("/{id}")
     @Operation(summary = "Buscar estilo por ID", description = "Retorna um estilo específico pelo ID")
     @APIResponses({
@@ -63,6 +71,9 @@ public class EstiloResource {
     }
 
     @GET
+       @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+ 
     @Operation(summary = "Listar todos os estilos", description = "Retorna uma lista com todos os estilos")
     @APIResponse(responseCode = "200", description = "Lista de estilos retornada com sucesso",
                 content = @Content(mediaType = "application/json",
@@ -73,6 +84,9 @@ public class EstiloResource {
     }
 
     @GET
+       @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+ 
     @Path("/search")
     @Operation(summary = "Buscar estilos por nome", description = "Busca estilos que contenham o nome especificado")
     @APIResponse(responseCode = "200", description = "Lista de estilos encontrados",
@@ -89,6 +103,9 @@ public class EstiloResource {
     // UPDATE
     // ------------------------------
     @PUT
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Path("/{id}")
     @Operation(summary = "Atualizar estilo", description = "Atualiza um estilo existente")
     @APIResponses({
@@ -111,6 +128,9 @@ public class EstiloResource {
     // ------------------------------
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Deletar estilo", description = "Remove um estilo do sistema")
     @APIResponses({
         @APIResponse(responseCode = "204", description = "Estilo deletado com sucesso"),

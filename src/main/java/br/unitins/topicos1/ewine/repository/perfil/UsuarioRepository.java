@@ -13,9 +13,7 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         return find("login = ?1", login).firstResult();
     }
 
-    public Usuario findByLoginSenha(String login, String senhaHashed) {
-        return find("login = ?1 and senha = ?2", login, senhaHashed).firstResult();
-    }
+   
 
     public List<Usuario> listAllPaged(int page, int size) {
         return findAll().page(Page.of(page, size)).list();

@@ -8,7 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 /**
  * Declaração do SecurityScheme para o OpenAPI/Swagger UI.
  * Isso faz o botão "Authorize" aparecer como esquema Bearer (JWT).
- */
+ */     
 @ApplicationScoped
 @SecurityScheme(
     securitySchemeName = "bearerAuth",
@@ -17,4 +17,8 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
     bearerFormat = "JWT",
     in = SecuritySchemeIn.HEADER
 )
-public class OpenApiConfig { }
+public class OpenApiConfig {
+
+
+
+ }

@@ -1,4 +1,5 @@
 package br.unitins.topicos1.ewine.resource.vinho;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -12,6 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.unitins.topicos1.ewine.dto.winedto.OcasiaoDTO; // Importando o DTO de Ocasião
@@ -31,6 +33,9 @@ public class OcasiaoResource {
     // CREATE
     // ------------------------------
     @POST
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Criar nova ocasião", description = "Cria um novo tipo de ocasião (ex: Jantar Romântico, Festa, etc.) no sistema")
     @APIResponses({
         @APIResponse(responseCode = "201", description = "Ocasião criada com sucesso",
@@ -47,6 +52,9 @@ public class OcasiaoResource {
     // READ
     // ------------------------------
     @GET
+       @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+ 
     @Path("/{id}")
     @Operation(summary = "Buscar ocasião por ID", description = "Retorna uma ocasião específica pelo ID")
     @APIResponses({
@@ -63,6 +71,9 @@ public class OcasiaoResource {
     }
 
     @GET
+       @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+ 
     @Operation(summary = "Listar todas as ocasiões", description = "Retorna uma lista com todas as ocasiões")
     @APIResponse(responseCode = "200", description = "Lista de ocasiões retornada com sucesso",
                 content = @Content(mediaType = "application/json",
@@ -73,6 +84,9 @@ public class OcasiaoResource {
     }
 
     @GET
+       @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+ 
     @Path("/search")
     @Operation(summary = "Buscar ocasiões por nome", description = "Busca ocasiões que contenham o nome especificado")
     @APIResponse(responseCode = "200", description = "Lista de ocasiões encontradas",
@@ -90,6 +104,9 @@ public class OcasiaoResource {
     // ------------------------------
     @PUT
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Atualizar ocasião", description = "Atualiza uma ocasião existente")
     @APIResponses({
         @APIResponse(responseCode = "200", description = "Ocasião atualizada com sucesso",
@@ -111,6 +128,9 @@ public class OcasiaoResource {
     // ------------------------------
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Deletar ocasião", description = "Remove uma ocasião do sistema")
     @APIResponses({
         @APIResponse(responseCode = "204", description = "Ocasião deletada com sucesso"),

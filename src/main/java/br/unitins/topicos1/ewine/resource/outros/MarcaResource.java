@@ -1,9 +1,12 @@
 package br.unitins.topicos1.ewine.resource.outros;
 import java.util.List;
 
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+
 import br.unitins.topicos1.ewine.dto.OthersDTO.MarcaDTO;
 import br.unitins.topicos1.ewine.dto.OthersDTO.MarcaDTOResponse;
 import br.unitins.topicos1.ewine.service.others.MarcaService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -27,6 +30,9 @@ public class MarcaResource {
 
     // POST /marcas
     @POST
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     public Response create(MarcaDTO dto) {
         MarcaDTOResponse response = service.create(dto);
         // Retorna 201 Created
@@ -36,6 +42,9 @@ public class MarcaResource {
     // PUT /marcas/{id}
     @PUT
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     public Response update(@PathParam("id") Long id, MarcaDTO dto) {
         MarcaDTOResponse response = service.update(id, dto);
         // Retorna 200 OK
@@ -44,6 +53,9 @@ public class MarcaResource {
 
     // DELETE /marcas/{id}
     @DELETE
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         service.delete(id);

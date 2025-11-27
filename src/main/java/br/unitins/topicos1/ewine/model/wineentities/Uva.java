@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToMany;
 @Schema(hidden = true)
 public class Uva extends DefaultEntity {
     private String nome;
-     @ManyToMany(mappedBy = "uvas")
+     @ManyToMany(mappedBy = "uva")
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 }

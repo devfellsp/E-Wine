@@ -120,6 +120,24 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- JWT MicroProfile -->
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-smallrye-jwt</artifactId>
+</dependency>
+
+<!-- Security -->
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-security</artifactId>
+</dependency>
+
+<!-- JWT Build (para gerar tokens) -->
+<dependency>
+    <groupId>io.smallrye</groupId>
+    <artifactId>smallrye-jwt-build</artifactId>
+</dependency>
+
 
     </dependencies>
 

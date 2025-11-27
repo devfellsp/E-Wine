@@ -1,4 +1,4 @@
-package br.unitins.topicos1.sga.exception;
+package br.unitins.topicos1.exception;
 
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;

@@ -1,4 +1,4 @@
-package br.unitins.topicos1.sga.exception;
+package br.unitins.topicos1.exception;
 
 import java.util.ArrayList;
 import java.util.Collections;

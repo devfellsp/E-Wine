@@ -1,4 +1,4 @@
-package br.unitins.topicos1.sga.exception;
+package br.unitins.topicos1.exception;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -9,6 +9,8 @@ import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
+
+
 
 import java.time.OffsetDateTime;
 import java.util.List;

@@ -121,8 +121,6 @@ public class VinhoServiceImpl implements VinhoService {
         if (dto == null) throw new IllegalArgumentException("DTO não pode ser nulo.");
         if (dto.nome() == null || dto.nome().isBlank())
             throw new IllegalArgumentException("Nome do vinho é obrigatório.");
-        if (dto.preco() == null || dto.preco() < 0)
-            throw new IllegalArgumentException("Preço do vinho inválido.");
         if (dto.idMarca() == null) throw new IllegalArgumentException("ID da Marca é obrigatório.");
         if (dto.idTipoVinho() == null) throw new IllegalArgumentException("ID do Tipo de Vinho é obrigatório.");
         if (dto.idPais() == null) throw new IllegalArgumentException("ID do País de Origem é obrigatório.");
@@ -133,9 +131,11 @@ public class VinhoServiceImpl implements VinhoService {
         // Atributos simples
         vinho.setNome(dto.nome());
         vinho.setDescricao(dto.descricao());
-        vinho.setPreco(dto.preco());
-        vinho.setQuantEstoque(dto.quantEstoque());
-        vinho.setSku(dto.sku());
+        vinho.setTeorAlcoolico(dto.teorAlcoolico());
+        vinho.setVolume(dto.volume());
+        vinho.setHarmonizacao(dto.harmonizacao());
+        vinho.setNotasDegustacao(dto.notasDegustacao());
+        vinho.setServicoTemperatura(dto.servicoTemperatura());
         vinho.setImagem(dto.imagem());
 
         // Relacionamentos

@@ -1,5 +1,6 @@
 package br.unitins.topicos1.ewine.resource.vinho;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -13,6 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.unitins.topicos1.ewine.dto.winedto.VinhoDTO;
@@ -32,6 +34,9 @@ public class VinhoResource {
     // CREATE
     // ------------------------------
     @POST
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+
     @Operation(summary = "Criar novo vinho", description = "Cria um novo vinho no sistema")
     @APIResponses({
         @APIResponse(responseCode = "201", description = "Vinho criado com sucesso",
@@ -49,6 +54,9 @@ public class VinhoResource {
     // ------------------------------
     @GET
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "Cliente"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Buscar vinho por ID", description = "Retorna um vinho específico pelo ID")
     @APIResponses({
         @APIResponse(responseCode = "200", description = "Vinho encontrado",
@@ -64,6 +72,9 @@ public class VinhoResource {
     }
 
     @GET
+    @RolesAllowed({"ADMIN", "Cliente"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Listar todos os vinhos", description = "Retorna uma lista com todos os vinhos")
     @APIResponse(responseCode = "200", description = "Lista de vinhos retornada com sucesso",
                 content = @Content(mediaType = "application/json",
@@ -75,6 +86,9 @@ public class VinhoResource {
 
     @GET
     @Path("/search")
+    @RolesAllowed({"ADMIN", "Cliente"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Buscar vinhos por nome", description = "Busca vinhos que contenham o nome especificado")
     @APIResponse(responseCode = "200", description = "Lista de vinhos encontrados",
                 content = @Content(mediaType = "application/json",
@@ -88,6 +102,9 @@ public class VinhoResource {
 
     @GET
     @Path("/marca/{idMarca}")
+    @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Buscar vinhos por marca", description = "Retorna vinhos de uma marca específica")
     @APIResponse(responseCode = "200", description = "Lista de vinhos da marca",
                 content = @Content(mediaType = "application/json",
@@ -101,6 +118,9 @@ public class VinhoResource {
 
     @GET
     @Path("/tipo/{idTipoVinho}")
+    @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Buscar vinhos por tipo", description = "Retorna vinhos de um tipo específico")
     @APIResponse(responseCode = "200", description = "Lista de vinhos do tipo especificado",
                 content = @Content(mediaType = "application/json",
@@ -114,6 +134,9 @@ public class VinhoResource {
 
     @GET
     @Path("/pais/{idPais}")
+    @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Buscar vinhos por país", description = "Retorna vinhos de um país específico")
     @APIResponse(responseCode = "200", description = "Lista de vinhos do país especificado",
                 content = @Content(mediaType = "application/json",
@@ -130,6 +153,9 @@ public class VinhoResource {
     // ------------------------------
     @PUT
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Atualizar vinho", description = "Atualiza um vinho existente")
     @APIResponses({
         @APIResponse(responseCode = "200", description = "Vinho atualizado com sucesso",
@@ -151,6 +177,9 @@ public class VinhoResource {
     // ------------------------------
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Deletar vinho", description = "Remove um vinho do sistema")
     @APIResponses({
         @APIResponse(responseCode = "204", description = "Vinho deletado com sucesso"),

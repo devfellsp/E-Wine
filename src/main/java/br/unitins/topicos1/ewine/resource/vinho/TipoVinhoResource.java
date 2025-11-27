@@ -1,5 +1,6 @@
 package br.unitins.topicos1.ewine.resource.vinho;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -13,6 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.unitins.topicos1.ewine.dto.winedto.TipoVinhoDTO;
@@ -32,6 +34,9 @@ public class TipoVinhoResource {
     // CREATE
     // ------------------------------
     @POST
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Criar novo tipo de vinho", description = "Cria um novo tipo de vinho no sistema")
     @APIResponses({
         @APIResponse(responseCode = "201", description = "Tipo de vinho criado com sucesso",
@@ -65,6 +70,9 @@ public class TipoVinhoResource {
     }
 
     @GET
+       @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+ 
     @Operation(summary = "Listar todos os tipos de vinho", description = "Retorna uma lista com todos os tipos de vinho")
     @APIResponse(responseCode = "200", description = "Lista de tipos de vinho retornada com sucesso",
                 content = @Content(mediaType = "application/json",
@@ -76,6 +84,9 @@ public class TipoVinhoResource {
 
     @GET
     @Path("/search")
+   @RolesAllowed({"ADMIN", "CLIENTE"})
+    @SecurityRequirement(name = "bearerAuth")
+  
     @Operation(summary = "Buscar tipos de vinho por nome", description = "Busca tipos de vinho que contenham o nome especificado")
     @APIResponse(responseCode = "200", description = "Lista de tipos de vinho encontrados",
                 content = @Content(mediaType = "application/json",
@@ -92,6 +103,9 @@ public class TipoVinhoResource {
     // ------------------------------
     @PUT
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Atualizar tipo de vinho", description = "Atualiza um tipo de vinho existente")
     @APIResponses({
         @APIResponse(responseCode = "200", description = "Tipo de vinho atualizado com sucesso",
@@ -113,6 +127,9 @@ public class TipoVinhoResource {
     // ------------------------------
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
+    @SecurityRequirement(name = "bearerAuth")
+    
     @Operation(summary = "Deletar tipo de vinho", description = "Remove um tipo de vinho do sistema")
     @APIResponses({
         @APIResponse(responseCode = "204", description = "Tipo de vinho deletado com sucesso"),
